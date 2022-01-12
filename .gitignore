@@ -9,7 +9,7 @@
 
 build/
 dist/
-hapi2.egg-info/
+hapi2_db_clickhouse.egg-info/
 
 showcase/local
 showcase/.ipynb_checkpoints/

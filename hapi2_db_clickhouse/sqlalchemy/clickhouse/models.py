@@ -89,10 +89,10 @@ class CrossSection(models.CrossSection, CRUD_Generic, Base):
     temperature = Column('temperature',DOUBLETYPE)
     pressure = Column('pressure',DOUBLETYPE)
     resolution = Column('resolution',DOUBLETYPE)
-    resolution_units = Column('resolution_units',VARCHARTYPE(5))
-    broadener = Column('broadener',VARCHARTYPE(20))
+    resolution_units = Column('resolution_units',VARCHARTYPE)
+    broadener = Column('broadener',VARCHARTYPE)
     description = Column('description',VARCHARTYPE)
-    apodization = Column('apodization',VARCHARTYPE(20))
+    apodization = Column('apodization',VARCHARTYPE)
     json = Column('json',VARCHARTYPE) # auxiliary field containing non-schema information
 
     # additional HITRANonline-compliant parameters parameters
@@ -118,7 +118,7 @@ class SourceAlias(models.SourceAlias, CRUD_Generic, Base):
 class Source(models.Source, CRUD_Generic, Base):
 
     id = Column(INTTYPE,primary_key=True)
-    short_alias = Column('short_alias',VARCHARTYPE(50),nullable=IS_NULLABLE,unique=IS_UNIQUE)
+    short_alias = Column('short_alias',VARCHARTYPE,nullable=IS_NULLABLE,unique=IS_UNIQUE)
     type = Column('type',VARCHARTYPE)
     authors = Column('authors',TEXTTYPE)
     title = Column('title',TEXTTYPE)
@@ -161,7 +161,7 @@ linelist_vs_transition = Table('linelist_vs_transition', Base.metadata,
 class Linelist(models.Linelist, CRUD_Generic, Base):
 
     id = Column('id',INTTYPE,primary_key=True)
-    name = Column('name',VARCHARTYPE(70),unique=IS_UNIQUE,nullable=False)
+    name = Column('name',VARCHARTYPE,unique=IS_UNIQUE,nullable=False)
     description = Column('description',VARCHARTYPE)
 
     __table_args__ = (
@@ -182,13 +182,13 @@ class Transition(models.Transition, CRUD_Dotpar, Base):
     elower = Column('elower',DOUBLETYPE)
     n_air = Column('n_air',DOUBLETYPE)
     delta_air = Column('delta_air',DOUBLETYPE)
-    global_upper_quanta = Column('global_upper_quanta',VARCHARTYPE(15))
-    global_lower_quanta = Column('global_lower_quanta',VARCHARTYPE(15))
-    local_upper_quanta = Column('local_upper_quanta',VARCHARTYPE(15))
-    local_lower_quanta = Column('local_lower_quanta',VARCHARTYPE(15))
-    ierr = Column('ierr',VARCHARTYPE(6))
-    iref = Column('iref',VARCHARTYPE(12))
-    line_mixing_flag = Column('line_mixing_flag',VARCHARTYPE(1))
+    global_upper_quanta = Column('global_upper_quanta',VARCHARTYPE)
+    global_lower_quanta = Column('global_lower_quanta',VARCHARTYPE)
+    local_upper_quanta = Column('local_upper_quanta',VARCHARTYPE)
+    local_lower_quanta = Column('local_lower_quanta',VARCHARTYPE)
+    ierr = Column('ierr',VARCHARTYPE)
+    iref = Column('iref',VARCHARTYPE)
+    line_mixing_flag = Column('line_mixing_flag',VARCHARTYPE)
     gp = Column('gp',INTTYPE)
     gpp = Column('gpp',INTTYPE)
     
@@ -224,7 +224,7 @@ class Isotopologue(models.Isotopologue, CRUD_Generic, Base):
     iso_name_html = Column('iso_name_html',VARCHARTYPE)
     abundance = Column('abundance',DOUBLETYPE, nullable=True)
     mass = Column('mass',DOUBLETYPE)
-    afgl_code = Column('afgl_code',VARCHARTYPE(20))
+    afgl_code = Column('afgl_code',VARCHARTYPE)
 
     __table_args__ = (
         #Index('isotopologue__molecule_alias_id', molecule_alias_id),
