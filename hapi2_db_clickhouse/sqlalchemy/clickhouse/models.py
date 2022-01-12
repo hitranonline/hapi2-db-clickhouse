@@ -27,6 +27,11 @@ DOUBLETYPE = clhs_types.Float64
 INTTYPE = clhs_types.Int32
 DATETYPE = clhs_types.Date
 
+INTTYPE8 = clhs_types.Int8
+INTTYPE16 = clhs_types.Int16
+INTTYPE32 = clhs_types.Int32
+INTTYPE64 = clhs_types.Int64
+
 Base = clhs_get_declarative_base()
 make_session = lambda engine: clhs_make_session(engine)
 
