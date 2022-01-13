@@ -51,7 +51,7 @@ TRANS_ATTRS = ['molec_id','local_iso_id','nu','sw','a','gamma_air','gamma_self',
     'n_air','delta_air','global_upper_quanta','global_lower_quanta','local_upper_quanta',
     'local_lower_quanta','ierr','iref','line_mixing_flag','gp','gpp']
             
-def insert_transition_dicts_core_(TRANS_DICTS,linelist_id,local):
+def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,deduplicate=True):
     """
     Helper function inserting the block of transitions in dictionary format in the database. 
     INPUT: 
@@ -61,7 +61,8 @@ def insert_transition_dicts_core_(TRANS_DICTS,linelist_id,local):
     """
     session = VARSPACE['session']    
     
-    Transition = VARSPACE['db_backend'].models.Transition
+    #Transition = VARSPACE['db_backend'].models.Transition
+    Transition = cls
     IsotopologueAlias = VARSPACE['db_backend'].models.IsotopologueAlias
     linelist_vs_transition = VARSPACE['db_backend'].models.linelist_vs_transition
         
@@ -292,8 +293,9 @@ def insert_transition_dicts_core_(TRANS_DICTS,linelist_id,local):
     if LLST_VS_TRANS:
         session.execute(linelist_vs_transition.insert(),LLST_VS_TRANS) 
     
-    print('\nDEDUPLICATING TABLE "%s"'%Transition.__table__)
-    session.execute(text_('optimize table %s final deduplicate;'%Transition.__table__))
+    if deduplicate:
+        print('\nDEDUPLICATING TABLE "%s"'%Transition.__table__)
+        session.execute(text_('optimize table %s final deduplicate;'%Transition.__table__))
     
     session.commit() # COMMIT ALL CHANGES!!
     
@@ -326,7 +328,7 @@ def get_transitions_by_ids(ids):
 #NBULK = 300000 # EACH BULK CORRESPONDS TO SEPARATE TRANSACTION; 300000 causing Clickhouse to overflow
 NBULK = 150000
 #def __insert_transitions_core__(models,header,llst_name='DEFAULT'):   DELETE THIS LINE !!!!!!!
-def __insert_transitions_core__(cls,stream,local=True,llst_name='default'):
+def __insert_transitions_core__(cls,stream,local=True,llst_name='default',**argv):
     """
     Update and commit exclusively for cross-section headers. Will not work for other types of objects!!!
     The name of the HAPI table should be supplied with the llst_name parameter.
@@ -345,7 +347,7 @@ def __insert_transitions_core__(cls,stream,local=True,llst_name='default'):
         if not TRANS_DICTS: break
         
         ntot += len(TRANS_DICTS)            
-        ids += insert_transition_dicts_core_(TRANS_DICTS,llst.id,local=local)
+        ids += insert_transition_dicts_core_(cls,TRANS_DICTS,llst.id,local=local,**argv)
 
         print('Total lines processed: %d'%ntot)
         print('==================================')
