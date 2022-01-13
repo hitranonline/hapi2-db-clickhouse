@@ -1,5 +1,6 @@
 import json
-from hapi2.db import models
+#from hapi2.db import models
+from hapi2.config import VARSPACE
 from hapi2.format.dispatch import FormatDispatcher
 
 FIELD_DEFAULTS = {
@@ -12,7 +13,8 @@ def assign_defaults_json(header,stream):
     """ Assign default values for missing parameters or 
         inserting into Clickhouse """
     clsname = header['content']['class']
-    cls = getattr(models,clsname)
+    #cls = getattr(models,clsname)
+    cls = getattr(VARSPACE['db_backend'].models,clsname)
     for item in stream:
         for key,meta in cls.__keys__:
             if key not in item or item[key] is None:
@@ -22,8 +24,6 @@ def assign_defaults_json(header,stream):
 def assign_defaults_dotpar(header,stream):
     """ Assign default values for missing parameters or 
         inserting into Clickhouse """
-    clsname = header['content']['class']
-    cls = getattr(models,clsname)
     for item in stream:
         if 'extra' in item:
             item['extra'] = json.dumps(item['extra'])
