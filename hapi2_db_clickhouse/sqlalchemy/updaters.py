@@ -51,13 +51,14 @@ TRANS_ATTRS = ['molec_id','local_iso_id','nu','sw','a','gamma_air','gamma_self',
     'n_air','delta_air','global_upper_quanta','global_lower_quanta','local_upper_quanta',
     'local_lower_quanta','ierr','iref','line_mixing_flag','gp','gpp']
             
-def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,deduplicate=True):
+def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,initial=False):
     """
     Helper function inserting the block of transitions in dictionary format in the database. 
     INPUT: 
         TRANS_DICTS: list of dicts, each dict holding all needed parameters for one transition
-        transaction_dict: transaction parameters in dict
-        linelist_dict: linelist parameters in dict
+        linelist_id: id of the linelist to attach the transitions to
+        local: flag to separate "global" (i.e. those from HITRANonline) transitions and "local" ones
+        initial: True means that some lookups are omitted, which speeds up the initial line addition
     """
     session = VARSPACE['session']    
     
@@ -164,18 +165,21 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,deduplicate=
     
     DB_LOOKUP = []
     total_read = 0
-    for i,ids_chunk in enumerate(chunks(ids_for_lookup)):
-        n_chunk = len(ids_chunk)
-        stmt = sql.select(
-                [Transition.__table__.c.id, 
-                Transition.__table__.c.extra]
-            ).\
-            where(
-                Transition.__table__.c.id.in_(ids_chunk)
-            ) # retrieve only ids and extra parameters (because the latter should be updated with the new data)
-        total_read += n_chunk
+    
+    if not initial:
         
-        DB_LOOKUP += session.execute(stmt) # list of tuples (id,extra)
+        for i,ids_chunk in enumerate(chunks(ids_for_lookup)):
+            n_chunk = len(ids_chunk)
+            stmt = sql.select(
+                    [Transition.__table__.c.id, 
+                    Transition.__table__.c.extra]
+                ).\
+                where(
+                    Transition.__table__.c.id.in_(ids_chunk)
+                ) # retrieve only ids and extra parameters (because the latter should be updated with the new data)
+            total_read += n_chunk
+        
+            DB_LOOKUP += session.execute(stmt) # list of tuples (id,extra)
                 
     # Create group 2 and merge the new extra parameters there.
     for id,extra in DB_LOOKUP:
@@ -183,7 +187,6 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,deduplicate=
         #if extra is not None:
         if extra is not None and extra != '':
             extra = json.loads(extra)
-            #trans_dict['extra'] = extra.update(trans_dict['extra'])
             extra.update(trans_dict['extra'])
             trans_dict['extra'] = json.dumps(extra)
         TRANS_DICTS_2.append(trans_dict)
@@ -285,7 +288,7 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,deduplicate=
     if TRANS_DICTS_1A_1B:
         session.execute(Transition.__table__.insert(),TRANS_DICTS_1A_1B) 
     
-    # ---> update existing transitions
+    # ---> update existing transitions (for Clickhouse, just add new items that will "mask" the old ones)
     if TRANS_DICTS_2:
         session.execute(Transition.__table__.insert(),TRANS_DICTS_2) 
         
@@ -293,7 +296,7 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,deduplicate=
     if LLST_VS_TRANS:
         session.execute(linelist_vs_transition.insert(),LLST_VS_TRANS) 
     
-    if deduplicate:
+    if not initial:
         print('\nDEDUPLICATING TABLE "%s"'%Transition.__table__)
         session.execute(text_('optimize table %s final deduplicate;'%Transition.__table__))
     
