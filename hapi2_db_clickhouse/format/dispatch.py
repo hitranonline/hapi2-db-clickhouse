@@ -1,5 +1,4 @@
 import json
-#from hapi2.db import models
 from hapi2.config import VARSPACE
 from hapi2.format.dispatch import FormatDispatcher
 

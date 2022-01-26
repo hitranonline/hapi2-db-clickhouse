@@ -6,9 +6,11 @@ setup(
     #version=__version__,
     version='0.1',
     packages=[
-        'hapi2_db_clickhouse',
-        'hapi2_db_clickhouse.sqlalchemy',
-        'hapi2_db_clickhouse.sqlalchemy.clickhouse',
+        'hapi2_db_clickhouse',        
+        'hapi2_db_clickhouse.db',
+        'hapi2_db_clickhouse.db.sqlalchemy',
+        'hapi2_db_clickhouse.db.sqlalchemy.clickhouse',
+        'hapi2_db_clickhouse.format',        
     ],
     #license='BSD-2',
 )

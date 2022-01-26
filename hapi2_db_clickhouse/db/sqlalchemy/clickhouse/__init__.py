@@ -1,4 +1,4 @@
-from ..base import create_engine
+from hapi2.db.sqlalchemy.base import create_engine
 from .models import Base, make_session
 
 from hapi2.config import SETTINGS, VARSPACE

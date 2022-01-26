@@ -6,7 +6,7 @@ from hapi2.db.sqlalchemy.base import commit, query
 
 from hapi2.db.sqlalchemy import models
 
-from .dispatch import FormatDispatcher_JSON, FormatDispatcher_Dotpar
+from ....format.dispatch import FormatDispatcher_JSON, FormatDispatcher_Dotpar
 
 from hapi2.config import SETTINGS
 

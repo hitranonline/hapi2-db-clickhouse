@@ -2,7 +2,7 @@ from itertools import islice
 
 from hapi2.config import SETTINGS, VARSPACE
 
-from .base import sql, query, commit, bindparam, text_
+from hapi2.db.sqlalchemy.base import sql, query, commit, bindparam, text_
 
 def attach_data_to_cross_sections(xss,datadir,local=True):
     """
