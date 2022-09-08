@@ -1,10 +1,14 @@
-Metadata-Version: 1.0
+Metadata-Version: 1.2
 Name: hapi2-db-clickhouse
 Version: 0.1
-Summary: UNKNOWN
-Home-page: UNKNOWN
-Author: UNKNOWN
-Author-email: UNKNOWN
+Summary: ClickHouse plugin for HAPI v2
+Home-page: https://github.com/hitranonline/hapi2-db-clickhouse
+Author: Roman Kochanov
+Author-email: 
 License: UNKNOWN
 Description: UNKNOWN
 Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.5

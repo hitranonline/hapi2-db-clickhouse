@@ -1,16 +1,17 @@
-from setuptools import setup
-#from hapi2 import __version__
+from setuptools import find_packages, setup
 
 setup(
     name='hapi2_db_clickhouse',
-    #version=__version__,
     version='0.1',
-    packages=[
-        'hapi2_db_clickhouse',        
-        'hapi2_db_clickhouse.db',
-        'hapi2_db_clickhouse.db.sqlalchemy',
-        'hapi2_db_clickhouse.db.sqlalchemy.clickhouse',
-        'hapi2_db_clickhouse.format',        
+    author="Roman Kochanov",
+    author_email="",
+    description="ClickHouse plugin for HAPI v2",
+    url="https://github.com/hitranonline/hapi2-db-clickhouse",
+    python_requires=">=3.5",
+    packages=find_packages(),
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent",
     ],
-    #license='BSD-2',
 )

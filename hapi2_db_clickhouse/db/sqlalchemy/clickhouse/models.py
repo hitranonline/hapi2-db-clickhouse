@@ -76,7 +76,7 @@ class CrossSectionData(models.CrossSectionData, CRUD_Generic, Base):
     id = Column(INTTYPE,primary_key=True)
     header_id = Column('header_id',INTTYPE,nullable=IS_NULLABLE) # ,ForeignKey('cross_section.id')
     __nu__ = Column('__nu__',BLOBTYPE)
-    __coef__ = Column('__coef__',BLOBTYPE)
+    __xsc__ = Column('__xsc__',BLOBTYPE)
 
     __table_args__ = (
         engine_meta,
@@ -99,6 +99,7 @@ class CrossSection(models.CrossSection, CRUD_Generic, Base):
     description = Column('description',VARCHARTYPE)
     apodization = Column('apodization',VARCHARTYPE)
     json = Column('json',VARCHARTYPE) # auxiliary field containing non-schema information
+    format = Column('format',VARCHARTYPE)
 
     # additional HITRANonline-compliant parameters parameters
     filename = Column('filename',VARCHARTYPE,unique=IS_UNIQUE) # HITRANonline filename
