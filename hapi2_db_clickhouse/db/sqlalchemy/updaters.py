@@ -16,7 +16,7 @@ def attach_data_to_cross_sections(xss,datadir,local=True):
         
     VARSPACE['session'].commit()    
 
-def get_first_available_(cls,col,local=True):
+def get_first_available_(table,col,local=True):
     """
     Fetch next from maximum occupied value of the column from database for given class.
     """
@@ -24,12 +24,12 @@ def get_first_available_(cls,col,local=True):
     
     if local:
         stmt = sql.select(
-            [sql.func.min(getattr(cls.__table__.c,col))]
+            [sql.func.min(getattr(table.c,col))]
         )
         d_ = -1
     else:
         stmt = sql.select(
-            [sql.func.max(getattr(cls.__table__.c,col))]
+            [sql.func.max(getattr(table.c,col))]
         )
         d_ = 1
     res = session.execute(stmt)
@@ -91,7 +91,7 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,initial=Fals
     # ===================================================================================
 
     ids = []
-    id,d_id = get_first_available_(Transition,'id',local)
+    id,d_id = get_first_available_(Transition.__table__,'id',local)
     
     # ===================================================================================
     # 2. Loop through all transitions to find the group 1A and prepare the lookup table.
@@ -120,7 +120,7 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,initial=Fals
     # 3. Search and optionally save isotopologue aliases.
     # ===================================================================================
     
-    isoal_id,_ = get_first_available_(IsotopologueAlias,'id',local=False) # no local aliases
+    isoal_id,_ = get_first_available_(IsotopologueAlias.__table__,'id',local=False) # no local aliases
 
     isoal_names = list(ISOTOPOLOGUE_ALIASES.keys())
     
@@ -215,6 +215,8 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,initial=Fals
     
     # -- Step 5.1: create item objects for groups 1A and 1B --
     
+    id,d_id = get_first_available_(linelist_vs_transition,'id',local)
+    
     LLST_VS_TRANS = []
         
     for trans_dict in TRANS_DICTS_1A_1B:
@@ -225,8 +227,10 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,initial=Fals
         trans_dict['id'] = trans_dict.pop('id_')
                            
         # Start filling the line list mappings (list is common)
-        llst_map_item = {'linelist_id':linelist_id,'transition_id':id_}
+        llst_map_item = {'id':id,'linelist_id':linelist_id,'transition_id':id_}
         LLST_VS_TRANS.append(llst_map_item)
+        
+        id += d_id
 
     # -- Step 5.2: create line list mapping objects for group 2 --
     
@@ -238,8 +242,10 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,initial=Fals
         trans_dict['id'] = trans_dict.pop('id_')
         
         # Continue filling the line list mappings (list is common)
-        llst_map_item = {'linelist_id':linelist_id,'transition_id':id_}
+        llst_map_item = {'id':id,'linelist_id':linelist_id,'transition_id':id_}
         LLST_VS_TRANS.append(llst_map_item)
+        
+        id += d_id
                 
     # -- Step 5.3: FINALLY ADD ITEMS !!!  --
     
@@ -306,7 +312,7 @@ def insert_transition_dicts_core_(cls,TRANS_DICTS,linelist_id,local,initial=Fals
 
 def __create_linelist_TMP__(llst_name):
     # !!! TEMPORARY FUNCTION FOR CREATING LINELIST 
-    # (TO BE SUBSTITUTED BY THE GENERAIC CORE FUCTION)
+    # (TO BE SUBSTITUTED BY THE GENERIC CORE FUCTION)
     
     # Create a line list.
     session = VARSPACE['session']
@@ -314,8 +320,8 @@ def __create_linelist_TMP__(llst_name):
     
     llst = session.query(Linelist).filter(Linelist.name==llst_name).first()
     if not llst:
-        llst = Linelist(); llst.name = llst_name; llst.description = ''
-        llst.id,_ = get_first_available_(Linelist,'id',local=False)
+        llst = Linelist(None); llst.name = llst_name; llst.description = ''
+        llst.id,_ = get_first_available_(Linelist.__table__,'id',local=False)
         session.add(llst)
     
     session.commit() 
@@ -386,7 +392,7 @@ def __insert_base_items_core__(cls,ITEM_DICTS,local=True):
     # 1. Get first available values for auto-filled parameters for the group 1A.
     # ===================================================================================
     
-    id,d_id = get_first_available_(cls,'id',local)
+    id,d_id = get_first_available_(cls.__table__,'id',local)
     
     # ===================================================================================
     # 2. Loop through all items to find the group 1A and prepare the lookup table.
@@ -506,7 +512,7 @@ def __insert_alias_items_core__(cls,ITEM_DICTS,local=True):
     # 1. Get first available values for auto-filled parameters for the group 1A.
     # ===================================================================================
     
-    id,d_id = get_first_available_(cls,'id',local)
+    id,d_id = get_first_available_(cls.__table__,'id',local)
     
     # ===================================================================================
     # 2. Loop through all items to find the group 1A and prepare the lookup table.

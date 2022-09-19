@@ -71,6 +71,29 @@ class CRUD_Dotpar(models.CRUD_Dotpar):
         stream = cls.__format_dispatcher_class__().getStreamer(basedir=tmpdir,header=header)
         return __insert_transitions_core__(cls,stream,local=local,llst_name=llst_name,**argv)
 
+class PartitionFunction(models.PartitionFunction, CRUD_Generic, Base):
+
+    id = Column(INTTYPE,primary_key=True)
+    isotopologue_alias_id = Column('isotopologue_alias_id',INTTYPE,nullable=IS_NULLABLE) # ,ForeignKey('molecule_alias.id')
+    source_alias_id = Column('source_alias_id',INTTYPE,nullable=IS_NULLABLE) # ,ForeignKey('source_alias.id')
+    #Q296 = Column('Q296',DOUBLETYPE)
+    tmin = Column('tmin',DOUBLETYPE)
+    tmax = Column('tmax',DOUBLETYPE)
+    comment = Column('format',VARCHARTYPE)
+    status = Column('status',VARCHARTYPE)
+    json = Column('json',VARCHARTYPE) # auxiliary field containing non-schema information
+    
+    __TT__ = Column('__TT__',BLOBTYPE)
+    __QQ__ = Column('__QQ__',BLOBTYPE)
+
+    # additional HITRANonline-compliant parameters
+    filename = Column('filename',VARCHARTYPE,nullable=IS_NULLABLE) # HITRANonline filename
+
+    __table_args__ = (
+        engine_meta,
+        #Index('cross_section__molecule_alias_id', molecule_alias_id),
+    )
+
 class CrossSectionData(models.CrossSectionData, CRUD_Generic, Base):
 
     id = Column(INTTYPE,primary_key=True)
