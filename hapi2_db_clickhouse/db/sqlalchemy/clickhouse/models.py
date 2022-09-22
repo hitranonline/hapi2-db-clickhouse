@@ -6,6 +6,8 @@ from hapi2.db.sqlalchemy.base import commit, query
 
 from hapi2.db.sqlalchemy import models
 
+from hapi2.db.models import Mixture
+
 from ....format.dispatch import FormatDispatcher_JSON, FormatDispatcher_Dotpar
 
 from hapi2.config import SETTINGS
@@ -128,7 +130,7 @@ class CrossSection(models.CrossSection, CRUD_Generic, Base):
     # additional HITRANonline-compliant parameters parameters
     filename = Column('filename',VARCHARTYPE,unique=IS_UNIQUE) # HITRANonline filename
 
-    # cross-section has for data lineage...
+    # cross-section hash for data lineage...
     hash = Column('hash',VARCHARTYPE)
 
     __table_args__ = (
@@ -170,6 +172,9 @@ class CIACrossSection(models.CIACrossSection, CRUD_Generic, Base):
     # additional HITRANonline-compliant parameters
     #filename = Column('filename',VARCHARTYPE(255),unique=IS_UNIQUE) # HITRANonline filename
     filename = Column('filename',VARCHARTYPE,unique=False) # HITRANonline filename
+
+    # cia cross-section hash for data lineage...
+    hash = Column('hash',VARCHARTYPE(255))
 
     __table_args__ = (
         engine_meta,
